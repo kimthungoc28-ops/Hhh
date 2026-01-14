@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>TikTok Gift Panel</title>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+<style>
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== BODY ===== */
+body {
+  background: #2b2b2b;
+  color: #ffa94d;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+  height: 48px;
+  background: #1f1f1f;
+  border-bottom: 2px solid #00bcd4;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.header .title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00e5ff;
+}
+
+/* ===== PANEL ===== */
+.panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+  height: calc(100vh - 48px);
+}
+
+/* ===== COLUMN ===== */
+.column {
+  background: #232323;
+  border: 1px solid #3a3a3a;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== COLUMN HEADER ===== */
+.column-header {
+  background: #1a1a1a;
+  padding: 6px;
+  text-align: center;
+  font-weight: bold;
+  color: #00e5ff;
+  border-bottom: 1px solid #333;
+}
+
+/* ===== LIST ===== */
+.list {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== ITEM ===== */
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 1px solid #333;
+  font-size: 13px;
+}
+
+.item .left {
+  max-width: 75%;
+}
+
+.item .user {
+  font-weight: bold;
+  color: #ffa94d;
+}
+
+.item .gift {
+  color: #ffd180;
+}
+
+.item .time {
+  color: #aaa;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ===== HIGHLIGHT ===== */
+.vip { color: #ff5252; }
+.hot { color: #ffb300; }
+.normal { color: #90caf9; }
+</style>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="title">T-WORLD PANEL</div>
+</div>
+
+<!-- ===== MAIN PANEL ===== -->
+<div class="panel">
+
+  <div class="column">
+    <div class="column-header">VIP</div>
+    <div class="list" id="VIP"></div>
+  </div>
+
+  <div class="column">
+    <div class="column-header">HOT</div>
+    <div class="list" id="HOT"></div>
+  </div>
+
+  <div class="column">
+    <div class="column-header">NORMAL</div>
+    <div class="list" id="NORMAL"></div>
+  </div>
+
+  <div class="column">
+    <div class="column-header">OTHER</div>
+    <div class="list" id="OTHER"></div>
+  </div>
+
+</div>
+
+<script>
+const socket = io();
+
+socket.on("gift", data => {
+
+  const item = document.createElement("div");
+  item.className = "item";
+
+  item.innerHTML = `
+    <div class="left">
+      <div class="user ${data.col.toLowerCase()}">${data.user}</div>
+      <div class="gift">${data.gift} x${data.count}</div>
+    </div>
+    <div class="time">${data.time}</div>
+  `;
+
+  const col = document.getElementById(data.col);
+  if (col) {
+    col.prepend(item);
+
+    // Giữ tối đa 20 dòng mỗi cột (giống panel thật)
+    if (col.children.length > 20) {
+      col.removeChild(col.lastChild);
+    }
+  }
+});
+</script>
+
+</body>
+</html>
