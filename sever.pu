@@ -1,0 +1,20 @@
+from flask import Flask, render_template, request
+from sheet_manager import add_new_gift
+
+app = Flask(__name__)
+
+@app.route("/new_gift", methods=["GET", "POST"])
+def new_gift():
+    if request.method == "POST":
+        add_new_gift(
+            request.form["name"],
+            request.form["diamond"],
+            request.form["price"],
+            request.form["note"]
+        )
+        return "Đã lưu quà. Có thể đóng tab này."
+
+    return render_template("new_gift.html")
+
+def run_server():
+    app.run(host="0.0.0.0", port=5000)
